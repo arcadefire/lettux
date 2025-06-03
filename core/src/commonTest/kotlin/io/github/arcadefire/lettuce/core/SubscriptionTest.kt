@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
-import io.github.arcadefire.lettuce.HandledAction
+import io.github.arcadefire.lettuce.IncrementAction
 import kotlin.test.Test
 import io.github.arcadefire.lettuce.PlainState
 import io.github.arcadefire.lettuce.UnHandledAction
@@ -16,7 +16,7 @@ import io.github.arcadefire.lettuce.factory.createStore
 internal class SubscriptionTest {
 
     private val testActionHandler = ActionHandler<PlainState> { action ->
-        if (action is HandledAction) {
+        if (action is IncrementAction) {
             commit(state.copy(value = state.value + 1))
         }
     }
@@ -34,13 +34,13 @@ internal class SubscriptionTest {
                         collectedStates.add(it)
                     }
                     .map {
-                        it.value.takeIf { it == 1 }?.let { HandledAction } ?: UnHandledAction
+                        it.value.takeIf { it == 1 }?.let { IncrementAction } ?: UnHandledAction
                     }
             },
             storeScope = testScope,
         )
 
-        store.send(HandledAction)
+        store.send(IncrementAction)
 
         testScope.advanceUntilIdle()
         testScope.cancel()

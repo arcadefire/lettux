@@ -16,6 +16,7 @@ fun <STATE : State, SLICE : State> sliceStore(
     sliceToState: (STATE, SLICE) -> STATE,
     middlewares: List<Middleware> = emptyList(),
     subscription: Subscription<SLICE>? = null,
+    actionHandler: ActionHandler<SLICE>? = null,
     sliceScope: CoroutineScope,
 ): Store<SLICE> {
     return (store as SliceableStore<STATE>).slice(
@@ -23,6 +24,7 @@ fun <STATE : State, SLICE : State> sliceStore(
         stateToSlice = stateToSlice,
         middlewares = middlewares,
         sliceScope = sliceScope,
+        actionHandler = actionHandler,
     ).also { slicedStore ->
         subscription
             ?.subscribe(slicedStore.states)

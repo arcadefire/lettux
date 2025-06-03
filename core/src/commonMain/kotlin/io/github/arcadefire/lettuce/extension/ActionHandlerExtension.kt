@@ -20,6 +20,18 @@ fun <STATE : State> combine(vararg handlers: ActionHandler<STATE>): ActionHandle
     }
 }
 
+fun <STATE : State> combine(handlers: List<ActionHandler<STATE>>): ActionHandler<STATE> {
+    return ActionHandler {
+        handlers.forEach { handler -> with(handler) { handle(it) } }
+    }
+}
+
+fun <STATE : State> combine(handlers: Set<ActionHandler<STATE>>): ActionHandler<STATE> {
+    return ActionHandler {
+        handlers.forEach { handler -> with(handler) { handle(it) } }
+    }
+}
+
 operator fun <S : State> ActionHandler<S>.plus(another: ActionHandler<S>): ActionHandler<S> {
     return combine(this, another)
 }

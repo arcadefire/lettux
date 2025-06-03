@@ -3,7 +3,7 @@ package io.github.arcadefire.lettuce
 import io.github.arcadefire.lettuce.core.Action
 import io.github.arcadefire.lettuce.core.State
 
-object HandledAction : Action
+object IncrementAction : Action
 object UnHandledAction : Action
 
 data class NestedState(val innerState: PlainState = PlainState()) : State

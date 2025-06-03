@@ -4,7 +4,7 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
-import io.github.arcadefire.lettuce.HandledAction
+import io.github.arcadefire.lettuce.IncrementAction
 import io.github.arcadefire.lettuce.NestedState
 import io.github.arcadefire.lettuce.PlainState
 import io.github.arcadefire.lettuce.core.Action
@@ -28,7 +28,7 @@ internal class ActionHandlerTest {
                 storeScope = this,
             )
 
-            store.send(HandledAction)
+            store.send(IncrementAction)
 
             store.state shouldBe NestedState(PlainState(1))
         }

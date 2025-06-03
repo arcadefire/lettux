@@ -21,42 +21,14 @@ fun <STATE : State> createStore(
     subscription: Subscription<STATE>? = null,
     storeScope: CoroutineScope,
 ): Store<STATE> {
-    lateinit var store: Store<STATE>
-
     val statesFlow = MutableStateFlow(initialState)
-    val chain: Chain = middlewares
-        .foldRight(
-            Chain { action ->
-                val actionContext = DefaultActionContext(
-                    sendFunction = store::send,
-                    getState = { statesFlow.value },
-                    setState = { statesFlow.value = it },
-                )
-                val oldState = statesFlow.value
-
-                with(actionHandler) {
-                    with(actionContext) {
-                        handle(action)
-                    }
-                }
-
-                val newState = statesFlow.value
-                if (oldState != newState) {
-                    Outcome.StateMutated(newState)
-                } else {
-                    Outcome.NoMutation
-                }
-            }
-        ) { middleware, chain ->
-            Chain { action -> middleware.intercept(action, statesFlow.value, chain) }
-        }
 
     return DefaultStore(
         states = statesFlow,
         storeScope = storeScope,
-        doSend = { action -> chain.proceed(action) },
-    ).also {
-        store = it
+        middlewares = middlewares,
+        actionHandler = actionHandler,
+    ).also { store ->
         subscription?.apply {
             subscribe(store.states)
                 .onEach(store::send)

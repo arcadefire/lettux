@@ -12,7 +12,7 @@ import io.github.arcadefire.lettuce.factory.createStore
 internal class DefaultStoreTest {
 
     private val testActionHandler = ActionHandler<PlainState> { action ->
-        if (action is HandledAction) {
+        if (action is IncrementAction) {
             commit(state.copy(value = state.value + 1))
         }
     }
@@ -25,7 +25,7 @@ internal class DefaultStoreTest {
             storeScope = this,
         )
 
-        store.send(HandledAction)
+        store.send(IncrementAction)
 
         store.state shouldBe PlainState(value = 1)
     }
@@ -48,7 +48,7 @@ internal class DefaultStoreTest {
             storeScope = this,
         )
 
-        store.send(HandledAction)
+        store.send(IncrementAction)
 
         counter shouldBe 2
     }
@@ -71,7 +71,7 @@ internal class DefaultStoreTest {
             storeScope = this,
         )
 
-        store.send(HandledAction)
+        store.send(IncrementAction)
 
         callOrder shouldBe listOf(1, 2)
     }
@@ -89,7 +89,7 @@ internal class DefaultStoreTest {
             storeScope = this,
         )
 
-        store.send(HandledAction).join()
+        store.send(IncrementAction).join()
 
         outcome shouldBe Outcome.StateMutated(PlainState(value = 1))
     }

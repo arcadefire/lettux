@@ -16,5 +16,6 @@ internal interface SliceableStore<STATE : State> {
         sliceToState: (STATE, SLICE) -> STATE,
         middlewares: List<Middleware> = emptyList(),
         sliceScope: CoroutineScope,
+        actionHandler: ActionHandler<SLICE>? = null,
     ): Store<SLICE>
 }
