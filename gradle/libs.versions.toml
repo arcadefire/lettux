@@ -1,14 +1,14 @@
 [versions]
-agp = "8.5.2"
-atomicfu = "0.26.1"
-coreKtx = "1.15.0"
-kotestAssertionsCore = "5.9.0"
-kotlin = "2.1.10"
-kotlinxCoroutinesCore = "1.10.1"
+agp = "8.11.1"
+atomicfu = "0.29.0"
+coreKtx = "1.16.0"
+kotestAssertionsCore = "5.9.1"
+kotlin = "2.2.0"
+kotlinxCoroutinesCore = "1.10.2"
 android-minSdk = "24"
-android-compileSdk = "34"
-kotlinxCoroutinesTest = "1.10.1"
-lifecycleViewmodelKtx = "2.8.7"
+android-compileSdk = "36"
+kotlinxCoroutinesTest = "1.10.2"
+lifecycleViewmodelKtx = "2.9.2"
 
 [libraries]
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
