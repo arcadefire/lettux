@@ -9,9 +9,11 @@ android-minSdk = "24"
 android-compileSdk = "36"
 kotlinxCoroutinesTest = "1.10.2"
 lifecycleViewmodelKtx = "2.9.2"
+detekt = "1.23.8"
 
 [libraries]
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotestAssertionsCore" }
 kotlinx-atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "atomicfu" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -23,3 +25,4 @@ lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx
 vanniktech-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.29.0" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

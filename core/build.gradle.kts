@@ -1,4 +1,6 @@
 import com.vanniktech.maven.publish.SonatypeHost
+import io.gitlab.arturbosch.detekt.Detekt
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -6,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.vanniktech.mavenPublish)
+    alias(libs.plugins.detekt)
 }
 
 group = "io.github.arcadefire"
@@ -25,12 +28,6 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
-        all {
-            with(languageSettings) {
-                enableLanguageFeature("ContextReceivers")
-                optIn("kotlin.RequiresOptIn")
-            }
-        }
         val commonMain by getting {
             dependencies {
                 implementation(libs.kotlinx.atomicfu)
@@ -50,6 +47,12 @@ kotlin {
                 implementation(libs.core.ktx)
             }
         }
+        all {
+            with(languageSettings) {
+                enableLanguageFeature("ContextReceivers")
+                optIn("kotlin.RequiresOptIn")
+            }
+        }
     }
 }
 
@@ -62,6 +65,26 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    allRules = false
+    config.setFrom("$projectDir/config/detekt.yml")
+    baseline = file("$projectDir/config/baseline.xml")
+    dependencies {
+        detektPlugins(libs.detekt.formatting)
+    }
+}
+
+tasks.withType<Detekt>().configureEach {
+    jvmTarget = "1.8"
+}
+
+tasks.withType<Detekt>().configureEach {
+    reports {
+        html.required.set(true)
     }
 }
 
