@@ -1,12 +1,12 @@
 package io.github.arcadefire.lettuce.android
 
-import kotlinx.coroutines.CoroutineScope
 import io.github.arcadefire.lettuce.core.ActionHandler
 import io.github.arcadefire.lettuce.core.Middleware
 import io.github.arcadefire.lettuce.core.State
 import io.github.arcadefire.lettuce.core.Store
 import io.github.arcadefire.lettuce.core.Subscription
 import io.github.arcadefire.lettuce.factory.createStore
+import kotlinx.coroutines.CoroutineScope
 
 fun interface StoreCreator<S : State> {
     fun create(scope: CoroutineScope): Store<S>

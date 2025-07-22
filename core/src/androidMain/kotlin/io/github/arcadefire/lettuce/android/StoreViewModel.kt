@@ -2,13 +2,13 @@ package io.github.arcadefire.lettuce.android
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.StateFlow
 import io.github.arcadefire.lettuce.core.Action
 import io.github.arcadefire.lettuce.core.State
 import io.github.arcadefire.lettuce.core.Store
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 
-abstract class StoreViewModel<S : State>(storeCreator: StoreCreator<S>) : Store<S>, ViewModel() {
+open class StoreViewModel<S : State>(storeCreator: StoreCreator<S>) : Store<S>, ViewModel() {
 
     private val store: Store<S> by lazy {
         storeCreator.create(this.viewModelScope)

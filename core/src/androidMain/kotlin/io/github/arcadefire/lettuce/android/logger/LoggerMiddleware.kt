@@ -1,6 +1,5 @@
 package io.github.arcadefire.lettuce.android.logger
 
-import android.util.Log
 import io.github.arcadefire.lettuce.core.Action
 import io.github.arcadefire.lettuce.core.Chain
 import io.github.arcadefire.lettuce.core.Middleware
