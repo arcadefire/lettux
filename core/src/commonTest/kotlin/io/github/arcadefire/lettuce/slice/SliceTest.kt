@@ -1,13 +1,5 @@
 package io.github.arcadefire.lettuce.slice
 
-import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.runTest
-import kotlin.test.Test
 import io.github.arcadefire.lettuce.IncrementAction
 import io.github.arcadefire.lettuce.NestedState
 import io.github.arcadefire.lettuce.PlainState
@@ -19,11 +11,17 @@ import io.github.arcadefire.lettuce.core.Outcome
 import io.github.arcadefire.lettuce.core.Store
 import io.github.arcadefire.lettuce.core.Subscription
 import io.github.arcadefire.lettuce.extension.state
-import io.github.arcadefire.lettuce.factory.sliceStore
 import io.github.arcadefire.lettuce.factory.createStore
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.test.TestScope
+import io.github.arcadefire.lettuce.factory.sliceStore
+import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
+import kotlin.test.Test
 
 internal class SliceTest {
 
@@ -113,7 +111,7 @@ internal class SliceTest {
             sliceScope = this,
         )
         slice.send(IncrementAction)
-        advanceUntilIdle()
+
         parentCounter shouldBe 1
         sliceCounter shouldBe 1
     }
@@ -163,6 +161,31 @@ internal class SliceTest {
         }
 
     @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `slice subscription should receive the expected sliced state`() =
+        runTest {
+            lateinit var subscribedState: PlainState
+            val subscription = Subscription { states ->
+                states
+                    .onEach { subscribedState = it }
+                    .map { UnHandledAction }
+                    .take(1)
+            }
+            val sliced: Store<PlainState> = sliceStore(
+                store = testStore(storeScope = this),
+                stateToSlice = { state -> state.innerState },
+                sliceToState = { state, slice -> state.copy(innerState = slice) },
+                subscription = subscription,
+                sliceScope = this,
+            )
+
+            sliced.send(IncrementAction)
+            advanceUntilIdle()
+
+            subscribedState shouldBe PlainState(value = 1)
+        }
+
+    @Test
     fun `slice middleware should receive the expected outcome when the parent state doesn't change`() =
         runTest {
             lateinit var outcome: Outcome
@@ -183,31 +206,6 @@ internal class SliceTest {
         }
 
     @Test
-    fun `slice subscription should receive the expected sliced state`() =
-        runTest {
-            lateinit var subscribedState: PlainState
-            val subscription = Subscription { states ->
-                states
-                    .onEach { subscribedState = it }
-                    .map { UnHandledAction }
-                    .take(1)
-            }
-            val sliced: Store<PlainState> = sliceStore(
-                store = testStore(storeScope = this),
-                stateToSlice = { state -> state.innerState },
-                sliceToState = { state, slice -> state.copy(innerState = slice) },
-                subscription = subscription,
-                sliceScope = this,
-            )
-
-            sliced.send(IncrementAction)
-
-            advanceUntilIdle()
-
-            subscribedState shouldBe PlainState(value = 1)
-        }
-
-    @Test
     fun `slice scoped action handler should handle the action`() =
         runTest {
             val sliced: Store<PlainState> = sliceStore(
@@ -225,8 +223,6 @@ internal class SliceTest {
             )
 
             sliced.send(SetValueAction(value = 1_000))
-
-            advanceUntilIdle()
 
             sliced.state shouldBe PlainState(value = 1_000)
         }
@@ -251,8 +247,6 @@ internal class SliceTest {
             sliced.send(SetValueAction(value = 1_000))
             sliced.send(IncrementAction)
 
-            advanceUntilIdle()
-
             sliced.state shouldBe PlainState(value = 1_001)
         }
 
@@ -271,9 +265,10 @@ internal class SliceTest {
             sliceToState = { state, slice -> state.copy(innerState = slice) },
             sliceScope = this,
         )
+
         slice1.send(IncrementAction)
         slice2.send(IncrementAction)
-        advanceUntilIdle()
+
         slice1.state shouldBe PlainState(value = 2)
         slice2.state shouldBe PlainState(value = 2)
         parentStore.state.innerState.value shouldBe 2
@@ -287,8 +282,9 @@ internal class SliceTest {
             sliceToState = { state, slice -> state.copy(innerState = slice) },
             sliceScope = this,
         )
+
         repeat(5) { slice.send(IncrementAction) }
-        advanceUntilIdle()
+
         slice.state shouldBe PlainState(value = 5)
     }
 }
