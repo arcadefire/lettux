@@ -8,18 +8,11 @@ import io.github.arcadefire.lettuce.core.Outcome
 import io.github.arcadefire.lettuce.core.SliceableStore
 import io.github.arcadefire.lettuce.core.State
 import io.github.arcadefire.lettuce.core.Store
-import io.github.arcadefire.lettuce.extension.combine
 import io.github.arcadefire.lettuce.extension.defaultLaunch
-import io.github.arcadefire.lettuce.extension.pullback
 import io.github.arcadefire.lettuce.slice.SlicedStatesFlow
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import kotlin.collections.remove
 
 internal class DefaultStore<STATE : State>(
     override val states: MutableStateFlow<STATE>,

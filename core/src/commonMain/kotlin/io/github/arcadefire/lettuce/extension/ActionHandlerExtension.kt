@@ -2,7 +2,6 @@ package io.github.arcadefire.lettuce.extension
 
 import io.github.arcadefire.lettuce.core.ActionHandler
 import io.github.arcadefire.lettuce.core.State
-import io.github.arcadefire.lettuce.core.Subscription
 
 fun <STATE : State, SLICE : State> ActionHandler<SLICE>.pullback(
     stateToSlice: (STATE) -> SLICE,

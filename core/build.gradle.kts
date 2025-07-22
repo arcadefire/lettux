@@ -79,10 +79,8 @@ detekt {
 }
 
 tasks.withType<Detekt>().configureEach {
+    autoCorrect = true
     jvmTarget = "1.8"
-}
-
-tasks.withType<Detekt>().configureEach {
     reports {
         html.required.set(true)
     }
