@@ -47,8 +47,7 @@ internal class SliceTest {
 
     @Test
     fun `should slice from the parent store`() = runTest {
-        val sliced: Store<PlainState> = sliceStore(
-            store = testStore(storeScope = this),
+        val sliced: Store<PlainState> = testStore(storeScope = this).sliceStore(
             stateToSlice = { state -> state.innerState },
             sliceToState = { state, slice -> state.copy(innerState = slice) },
             sliceScope = this,
@@ -71,8 +70,7 @@ internal class SliceTest {
             chain.proceed(action)
         }
 
-        val sliced: Store<PlainState> = sliceStore(
-            store = testStore(storeScope = this),
+        val sliced: Store<PlainState> = testStore(storeScope = this).sliceStore(
             stateToSlice = { state -> state.innerState },
             sliceToState = { state, slice -> state.copy(innerState = slice) },
             middlewares = listOf(first, second),
@@ -103,8 +101,7 @@ internal class SliceTest {
             sliceCounter++
             chain.proceed(action)
         }
-        val slice = sliceStore(
-            store = parentStore,
+        val slice = parentStore.sliceStore(
             stateToSlice = { it.innerState },
             sliceToState = { state, slice -> state.copy(innerState = slice) },
             middlewares = listOf(sliceMiddleware),
@@ -127,8 +124,7 @@ internal class SliceTest {
             callOrder.add(2)
             chain.proceed(action)
         }
-        val sliced: Store<PlainState> = sliceStore(
-            store = testStore(storeScope = this),
+        val sliced: Store<PlainState> = testStore(storeScope = this).sliceStore(
             stateToSlice = { state -> state.innerState },
             sliceToState = { state, slice -> state.copy(innerState = slice) },
             middlewares = listOf(first, second),
@@ -147,8 +143,7 @@ internal class SliceTest {
             val middleware = Middleware { action, _, chain ->
                 chain.proceed(action).also { outcome = it }
             }
-            val sliced: Store<PlainState> = sliceStore(
-                store = testStore(storeScope = this),
+            val sliced: Store<PlainState> = testStore(storeScope = this).sliceStore(
                 stateToSlice = { state -> state.innerState },
                 sliceToState = { state, slice -> state.copy(innerState = slice) },
                 middlewares = listOf(middleware),
@@ -171,8 +166,7 @@ internal class SliceTest {
                     .map { UnHandledAction }
                     .take(1)
             }
-            val sliced: Store<PlainState> = sliceStore(
-                store = testStore(storeScope = this),
+            val sliced: Store<PlainState> = testStore(storeScope = this).sliceStore(
                 stateToSlice = { state -> state.innerState },
                 sliceToState = { state, slice -> state.copy(innerState = slice) },
                 subscription = subscription,
@@ -192,8 +186,7 @@ internal class SliceTest {
             val middleware = Middleware { action, _, chain ->
                 chain.proceed(action).also { outcome = it }
             }
-            val sliced: Store<PlainState> = sliceStore(
-                store = testStore(storeScope = this),
+            val sliced: Store<PlainState> = testStore(storeScope = this).sliceStore(
                 stateToSlice = { state -> state.innerState },
                 sliceToState = { state, slice -> state.copy(innerState = slice) },
                 middlewares = listOf(middleware),
@@ -208,12 +201,11 @@ internal class SliceTest {
     @Test
     fun `slice scoped action handler should handle the action`() =
         runTest {
-            val sliced: Store<PlainState> = sliceStore(
-                store = testStore(storeScope = this),
+            val sliced: Store<PlainState> = testStore(storeScope = this).sliceStore(
                 stateToSlice = { state -> state.innerState },
                 sliceToState = { state, slice -> state.copy(innerState = slice) },
                 sliceScope = this,
-                actionHandler = ActionHandler<PlainState> { action ->
+                actionHandler = ActionHandler { action ->
                     if (action is SetValueAction) {
                         commit(
                             state.copy(value = action.value)
@@ -230,8 +222,7 @@ internal class SliceTest {
     @Test
     fun `slice action handlers should handle scoped and non-scoped actions`() =
         runTest {
-            val sliced: Store<PlainState> = sliceStore(
-                store = testStore(storeScope = this),
+            val sliced: Store<PlainState> = testStore(storeScope = this).sliceStore(
                 stateToSlice = { state -> state.innerState },
                 sliceToState = { state, slice -> state.copy(innerState = slice) },
                 sliceScope = this,
@@ -253,14 +244,12 @@ internal class SliceTest {
     @Test
     fun `multiple slices from the same store should operate independently`() = runTest {
         val parentStore = testStore(storeScope = this)
-        val slice1 = sliceStore(
-            store = parentStore,
+        val slice1 = parentStore.sliceStore(
             stateToSlice = { it.innerState },
             sliceToState = { state, slice -> state.copy(innerState = slice) },
             sliceScope = this,
         )
-        val slice2 = sliceStore(
-            store = parentStore,
+        val slice2 = parentStore.sliceStore(
             stateToSlice = { it.innerState },
             sliceToState = { state, slice -> state.copy(innerState = slice) },
             sliceScope = this,
@@ -276,8 +265,7 @@ internal class SliceTest {
 
     @Test
     fun `slice should maintain state consistency after multiple actions`() = runTest {
-        val slice = sliceStore(
-            store = testStore(storeScope = this),
+        val slice = testStore(storeScope = this).sliceStore(
             stateToSlice = { it.innerState },
             sliceToState = { state, slice -> state.copy(innerState = slice) },
             sliceScope = this,
