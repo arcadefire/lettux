@@ -1,10 +1,7 @@
-package io.github.arcadefire.lettuce.android.logger
+package io.github.arcadefire.lettuce.android
 
 import android.util.Log
-
-fun interface LogsWriter {
-    fun writeLog(message: String)
-}
+import io.github.arcadefire.lettuce.LogsWriter
 
 object AndroidLogsWriter : LogsWriter {
     override fun writeLog(message: String) {

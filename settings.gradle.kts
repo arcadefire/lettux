@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "lettuce"
 include(":core")
+include(":extension")
